@@ -12,6 +12,10 @@ These examples are for individual researchers or small oceanographic research gr
 
 This repository contains examples for the converstion of three types of CTD files: Seabird `.cnv` files, RBR `.nc` files, and Tsk `.edf` files. There are equivalent scripts for use in both Matlab and Python.
 
+![Schematic image of the processing pipeline](https://github.com/mhwood/ctd_processing_pipeline/blob/main/images/processing_scripts_schematic.png)
+
+Image generated with the help of AI.
+
 
 
 
