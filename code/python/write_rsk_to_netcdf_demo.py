@@ -1,13 +1,27 @@
 #!/usr/bin/env python3
 # -*- coding: utf-8 -*-
-"""
 
+'''
+Converts a single-profile RBR CTD .rsk file to a NetCDF4 file with standardized metadata.
 
+This script is designed for .rsk files containing one cast. For multi-profile datasets,
+the script can be modified accordingly — the supporting modules ctd_file_template.py and
+write_ctd_netcdf.py are already structured to support multi-profile output.
 
-Created on Thu Jun 18 08:59:01 2026
+Two supporting modules are required:
+    - ctd_file_template.py  : defines the NetCDF structure, variables, and metadata schema
+    - write_ctd_netcdf.py   : writes the populated template to a NetCDF4 file
 
-@author: nataliemcgee
-"""
+Note: Not all metadata fields in ctd_file_template.py are populated by this script.
+Any unfilled fields will appear as blank or placeholder values (e.g. "email@example.edu")
+in the output file. Before publishing, review the template and either complete or remove
+these fields as appropriate.
+
+Author: Natalie McGee
+Date: June 18, 2026
+AI Assistance: Portions of this script were developed with the assistance of
+Claude (Anthropic, 2026), a large language model.
+'''
 
 from pyrsktools import RSK
 import gsw
@@ -16,7 +30,7 @@ from ctd_file_template import ctd_netcdf_template as ctd
 from write_ctd_netcdf import write_ctd_netcdf
 
 # Instantiate an RSK class object, passing the path to an RSK file
-rsk_file = "/Users/nataliemcgee/Downloads/206288_20260312_1232 Deep OG March 12, 2026.rsk"
+rsk_file = "path/to/your_file.rsk"
 
 # Output NetCDF4 filename
 output_filename = "rbr_to_netcdf_example"
@@ -33,9 +47,9 @@ ctd["attrs"]["processing_notes"] = "Describe the processing that occurred"
 ctd["attrs"]["history"] = "Log of processing steps"
 
 # project details
-ctd["attrs"]["project"] = "2026 Research Cruise"
+ctd["attrs"]["project"] = "Your 2026 Research Cruise"
 ctd["attrs"]["program"] = ""
-ctd["attrs"]["platform"] = "R/V Black Pearl"
+ctd["attrs"]["platform"] = ""
 
 # contact details
 ctd["attrs"]["creator_name"] = "Elizabeth Swann"
@@ -78,12 +92,13 @@ with RSK(rsk_file) as rsk:
     # -------------------------------------------------------------------------
     
     ctd["dims"]["depth"] = len(depth)
-    ctd["dims"]["profile"] = 1  # This demo is for a .rsk file with 1 profile
+    ctd["dims"]["profile"] = 1  # Script is configured for a single-profile .rsk file
 
     # -------------------------------------------------------------------------
     # Fill coordinate data
     # -------------------------------------------------------------------------
     
+    # Stored for use in global attributes below
     start_time = data["timestamp"][0].astype("datetime64[ms]").item().isoformat()
     end_time = data["timestamp"][-1].astype("datetime64[ms]").item().isoformat()
 
@@ -142,8 +157,8 @@ for name in [
     "temperature",
     "conductivity",
     "practical_salinity",
-    "potential_temperature",
-]:
+    "potential_temperature"]:
+    
     values = np.asarray(ctd["variables"][name]["data"])
     ctd["variables"][name]["attrs"]["valid_min"] = float(np.nanmin(values))
     ctd["variables"][name]["attrs"]["valid_max"] = float(np.nanmax(values))
