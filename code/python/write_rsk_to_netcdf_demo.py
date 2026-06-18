@@ -68,7 +68,7 @@ with RSK(rsk_file) as rsk:
     sea_pressure = pressure - 10.1325  # Account for surface atmospheric pres. (dbar)
 
     # Calculate derived variables
-    depth = gsw.z_from_p(sea_pressure, latitude)
+    depth = -gsw.z_from_p(sea_pressure, latitude) # Will be positive downward
     practical_salinity = gsw.SP_from_C(conductivity, temperature, sea_pressure)
     absolute_salinity = gsw.SA_from_SP(practical_salinity, sea_pressure, longitude, latitude)
     potential_temperature = gsw.pt0_from_t(absolute_salinity, temperature, sea_pressure)
