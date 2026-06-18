@@ -62,7 +62,6 @@ function write_ctd_netcdf(data,filename)
 
     %write variables
     for i=1:length(var_fn)
-        disp(var_fn{i})
         dn=length(var.(var_fn{i}).Dimensions);
         for d=1:dn
             if strcmp(var.(var_fn{i}).Dimensions(d),'z')
